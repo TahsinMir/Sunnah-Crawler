@@ -13,5 +13,6 @@ class Logger(object):
             print(Fore.GREEN + message + Style.RESET_ALL)
         elif log_type == logging.ERROR:
             print(Fore.RED + message + Style.RESET_ALL)
+        return message
 
 LOG = Logger()

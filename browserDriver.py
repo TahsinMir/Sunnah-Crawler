@@ -8,6 +8,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
 import helpers
+from commonVariables import errorPfx
 
 class BrowserDriver:
     def __init__(self, logger):
@@ -23,16 +24,18 @@ class BrowserDriver:
         chrome_options.binary_location = get_chrome_application_location()
 
         driver = None
+        errorMsg = None
         try:
             driver = webdriver.Chrome(options=chrome_options, service=Service(get_chromium_binary_location()))
             self.logger.post_log("{}: driver initialized".format(fn), logging.INFO)
         except Exception as e:
             if e is not None:
-                self.logger.post_log("{}: driver initialized, error: {}".format(fn, e), logging.ERROR)
+                errorMsg = self.logger.post_log("{}: {}: driver initialization failed, error: {}".format(errorPfx, fn, e), logging.ERROR)
                 if driver is not None:
                     driver.close()
                     driver.quit()
                     driver = None
+                return errorMsg
         return driver
 
 
