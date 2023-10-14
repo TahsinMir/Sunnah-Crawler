@@ -1,0 +1,5 @@
+conda create --name sunnah
+conda activate sunnah
+conda deactivate
+
+pip install requirements.txt

@@ -1,0 +1,1 @@
+sunnah_book_list = ["bukhari", "muslim", "an-nasai", "abi-dawud", "at-tirmidhi", "ibn-majah", "muwatta malik", "musnad ahmad", "ad-darimi"]
