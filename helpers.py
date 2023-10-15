@@ -17,4 +17,5 @@ def is_error(message):
 
 def quit_app_with_wait(logger, message):
     logger.post_log("existing app after error: {}".format(message), logging.ERROR)
+    input()
     sys.exit(1)

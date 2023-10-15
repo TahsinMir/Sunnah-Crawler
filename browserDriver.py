@@ -29,13 +29,12 @@ class BrowserDriver:
             driver = webdriver.Chrome(options=chrome_options, service=Service(get_chromium_binary_location()))
             self.logger.post_log("{}: driver initialized".format(fn), logging.INFO)
         except Exception as e:
-            if e is not None:
-                errorMsg = self.logger.post_log("{}: {}: driver initialization failed, error: {}".format(errorPfx, fn, e), logging.ERROR)
-                if driver is not None:
-                    driver.close()
-                    driver.quit()
-                    driver = None
-                return errorMsg
+            errorMsg = self.logger.post_log("{}: {}: driver initialization failed, error: {}".format(errorPfx, fn, e), logging.ERROR)
+            if driver is not None:
+                driver.close()
+                driver.quit()
+                driver = None
+            return errorMsg
         return driver
 
 
