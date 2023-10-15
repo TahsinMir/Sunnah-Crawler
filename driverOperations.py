@@ -24,7 +24,7 @@ class DriverOperations:
             element = self.logger.post_log("{}: {}: element is none".format(errorPfx, fn), logging.ERROR)
         return element
     
-    def get_child_elements(self, element, element_class):
+    def get_child_element(self, element, element_class):
         fn = helpers.get_function_name(inspect.currentframe())
         child_elements = None
         try:
@@ -45,3 +45,19 @@ class DriverOperations:
         if element_text is None:
             element_text = self.logger.post_log("{}: {}: element text is none".format(errorPfx, fn), logging.ERROR)
         return element_text
+
+    def get_child_element_array(self, element):
+        fn = helpers.get_function_name(inspect.currentframe())
+        rows_as_str = None
+
+        try:
+            element_rows = element.find_elements(By.TAG_NAME, "tr")
+            rows_as_str = []
+            for row in element_rows:
+                rows_as_str.append(row.text)
+                
+        except Exception as e:
+            rows_as_str = self.logger.post_log("{}: {}: error occured while getting child element array, error: {}".format(errorPfx, fn, e), logging.ERROR)
+        if rows_as_str is None:
+            rows_as_str = self.logger.post_log("{}: {}: element is none".format(errorPfx, fn), logging.ERROR)
+        return rows_as_str
