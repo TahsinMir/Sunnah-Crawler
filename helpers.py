@@ -19,3 +19,9 @@ def quit_app_with_wait(logger, message):
     logger.post_log("existing app after error: {}".format(message), logging.ERROR)
     input()
     sys.exit(1)
+
+def add_indent(number = 0):
+    result = ""
+    for i in range(number):
+        result = result + "\t"
+    return result

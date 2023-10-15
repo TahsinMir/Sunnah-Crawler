@@ -37,27 +37,27 @@ class HadithParser:
 
 
         # Hadith Narrated
-        english_hadith_narrated = self.driver_operation_instance.get_child_element(full_english_element, elementList.hadith_narrated)
-        if helpers.is_error(english_hadith_narrated):
-            helpers.quit_app_with_wait(self.logger, english_hadith_narrated)
+        english_narrated_text_element = self.driver_operation_instance.get_child_element(full_english_element, elementList.narrated_text)
+        if helpers.is_error(english_narrated_text_element):
+            helpers.quit_app_with_wait(self.logger, english_narrated_text_element)
 
 
-        english_hadith_narrated_text = self.driver_operation_instance.get_element_text(english_hadith_narrated)
-        if helpers.is_error(english_hadith_narrated_text):
-            helpers.quit_app_with_wait(self.logger, english_hadith_narrated_text)
+        english_narrated_text_str = self.driver_operation_instance.get_element_text(english_narrated_text_element)
+        if helpers.is_error(english_narrated_text_str):
+            helpers.quit_app_with_wait(self.logger, english_narrated_text_str)
 
         # Hadith details
-        english_hadith_details = self.driver_operation_instance.get_child_element(full_english_element, elementList.hadith_text_details)
-        if helpers.is_error(english_hadith_details):
-            helpers.quit_app_with_wait(self.logger, english_hadith_details)
+        english_details_text_element = self.driver_operation_instance.get_child_element(full_english_element, elementList.details_text)
+        if helpers.is_error(english_details_text_element):
+            helpers.quit_app_with_wait(self.logger, english_details_text_element)
 
 
-        english_hadith_details_text = self.driver_operation_instance.get_element_text(english_hadith_details)
-        if helpers.is_error(english_hadith_details_text):
-            helpers.quit_app_with_wait(self.logger, english_hadith_details_text)
+        english_details_text_str = self.driver_operation_instance.get_element_text(english_details_text_element)
+        if helpers.is_error(english_details_text_str):
+            helpers.quit_app_with_wait(self.logger, english_details_text_str)
         
         
-        return english_hadith_narrated_text, english_hadith_details_text
+        return english_narrated_text_str, english_details_text_str
 
 
     def parse_reference(self):
@@ -76,6 +76,18 @@ class HadithParser:
 
 
         return referenceDict
+    
+    def parse_arabic_text(self):
+        full_arabic_text_element = self.driver_operation_instance.get_element(elementList.full_arabic_text)
+        if helpers.is_error(full_arabic_text_element):
+            helpers.quit_app_with_wait(self.logger, full_arabic_text_element)
+        
+        full_arabic_text_element_str = self.driver_operation_instance.get_element_text(full_arabic_text_element)
+        if helpers.is_error(full_arabic_text_element_str):
+            helpers.quit_app_with_wait(self.logger, full_arabic_text_element_str)
+        
+        
+        return full_arabic_text_element_str
         
 
 
