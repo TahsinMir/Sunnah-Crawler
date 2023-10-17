@@ -4,6 +4,7 @@ import crawler
 import driverOperations
 import hadithParser
 import elementList
+import database
 from log import LOG
 from helpers import is_error, quit_app_with_wait
 from hadith import Hadith, ChapterInfo, Text, EnglishText, ArabicText, Reference, HadithProcessor
@@ -75,6 +76,27 @@ hadith_json = hadith_processor.hadith_to_json(hadith)
 print("json length::")
 print(len(hadith_json))
 
+print("string json to db")
+db_instance = database.Database(LOG)
+db_instance.create_database()
+
+insert = db_instance.insert_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference, hadith_json)
+print("insert")
+print(insert)
+
+
+get = db_instance.get_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference)
+print("get")
+print(get)
+
+# database value to object
+hadith_object_recreated_from_db = hadith_processor.json_to_hadith(hadith_json=get)
+print("hadith_object_recreated_from_db")
+print(hadith_object_recreated_from_db.pprint_str())
+
+delete = db_instance.delete_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference)
+print("delete")
+print(delete)
 
 #### JSON to object
 hadith_object_recreated = hadith_processor.json_to_hadith(hadith_json=hadith_json)

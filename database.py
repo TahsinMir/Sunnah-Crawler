@@ -14,31 +14,32 @@ db_name = "sunnah.db"
 class Database:
     def __init__(self, logger):
         self.logger = logger
+        self.get_connection()
     
-    def create_database(self, conn):
+    def create_database(self):
         fn = helpers.get_function_name(inspect.currentframe())
         if os.path.isfile(db_name):
             self.logger.post_log("{}: database already exists".format(fn), logging.INFO)
             return
         
-        conn.execute('''CREATE TABLE Hadiths
-         (HADITH_KEY TEXT NOT NULL,
+        self.conn.execute('''CREATE TABLE Hadiths
+         (HADITH_KEY TEXT NOT NULL UNIQUE,
          HADITH_BLOB TEXT NOT NULL);''')
         self.logger.post_log("{}: database initialized".format(fn), logging.INFO)
     
     def get_connection(self):
         conn = sqlite3.connect(db_name)
-        return conn
+        self.conn = conn
     
-    def is_data_exist(self, conn, key):
-        data = self.get_data(conn, key)
+    def is_data_exist(self, key):
+        data = self.get_data(key)
         if helpers.is_error(data):
             return False
         return True
 
-    def get_data(self, conn, key):
+    def get_data(self, key):
         fn = helpers.get_function_name(inspect.currentframe())
-        rows = conn.execute("SELECT HADITH_BLOB from Hadiths where HADITH_KEY = ?", (key,))
+        rows = self.conn.execute("SELECT HADITH_BLOB from Hadiths where HADITH_KEY = ?", (key,))
         data = None
         for row in rows:
             data = row[0]
@@ -50,33 +51,33 @@ class Database:
 
 
         
-    def insert_data(self, conn, key, blob):
+    def insert_data(self, key, blob):
         fn = helpers.get_function_name(inspect.currentframe())
         response = True
-        if self.is_data_exist(conn, key):
+        if self.is_data_exist(key):
             self.logger.post_log("{}: key already exists".format(fn), logging.INFO)
             return response
 
 
         try:
-            conn.execute("INSERT INTO Hadiths (HADITH_KEY, HADITH_BLOB) VALUES (?, ?)", (key, blob,))
-            conn.commit()
+            self.conn.execute("INSERT INTO Hadiths (HADITH_KEY, HADITH_BLOB) VALUES (?, ?)", (key, blob,))
+            self.conn.commit()
         except Exception as e:
             response = self.logger.post_log("{}: {}: error occured while inserting data with key: {}, error: {}".format(commonVariables.errorPfx, fn, key, e), logging.ERROR)
         
         return response
 
     
-    def delete_data(self, conn, key):
+    def delete_data(self, key):
         fn = helpers.get_function_name(inspect.currentframe())
         response = True
-        if not self.is_data_exist(conn, key):
+        if not self.is_data_exist(key):
             self.logger.post_log("{}: key does not exist. nothing to delete".format(fn), logging.INFO)
             return response
 
         try:
-            conn.execute("DELETE FROM Hadiths WHERE HADITH_KEY=?", (key,))
-            conn.commit()
+            self.conn.execute("DELETE FROM Hadiths WHERE HADITH_KEY=?", (key,))
+            self.conn.commit()
         except Exception as e:
             response = self.logger.post_log("{}: {}: error occured while inserting data with key: {}, error: {}".format(commonVariables.errorPfx, fn, key, e), logging.ERROR)
         
