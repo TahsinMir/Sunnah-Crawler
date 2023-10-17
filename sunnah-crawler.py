@@ -72,6 +72,8 @@ print(hadith.pprint_str())
 
 hadith_processor = HadithProcessor()
 hadith_json = hadith_processor.hadith_to_json(hadith)
+print("json length::")
+print(len(hadith_json))
 
 
 #### JSON to object
