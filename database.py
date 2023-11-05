@@ -10,26 +10,43 @@ import logging
 import commonVariables
 
 db_name = "sunnah.db"
+table_name = "Hadiths"
 
 class Database:
     def __init__(self, logger):
         self.logger = logger
         self.get_connection()
     
+    def get_connection(self):
+        conn = sqlite3.connect(db_name)
+        self.conn = conn
+    
+    def check_if_table_exists(self):
+        fn = helpers.get_function_name(inspect.currentframe())
+        rows = self.conn.execute("SELECT name FROM sqlite_master WHERE name = ?", (table_name,))
+        data = None
+        for row in rows:
+            data = row[0]
+        
+        if data is None:
+            self.logger.post_log("{}: {}: table does not exist".format(commonVariables.errorPfx, fn), logging.ERROR)
+            return False
+        
+        return True
+
     def create_database(self):
         fn = helpers.get_function_name(inspect.currentframe())
-        if os.path.isfile(db_name):
-            self.logger.post_log("{}: database already exists".format(fn), logging.INFO)
+        if self.check_if_table_exists():
+            self.logger.post_log("{}: table already exists".format(fn), logging.INFO)
             return
+        else:
+            self.logger.post_log("{}: creating table".format(fn), logging.INFO)
+
         
         self.conn.execute('''CREATE TABLE Hadiths
          (HADITH_KEY TEXT NOT NULL UNIQUE,
          HADITH_BLOB TEXT NOT NULL);''')
         self.logger.post_log("{}: database initialized".format(fn), logging.INFO)
-    
-    def get_connection(self):
-        conn = sqlite3.connect(db_name)
-        self.conn = conn
     
     def is_data_exist(self, key):
         data = self.get_data(key)
@@ -55,7 +72,7 @@ class Database:
         fn = helpers.get_function_name(inspect.currentframe())
         response = True
         if self.is_data_exist(key):
-            self.logger.post_log("{}: key already exists".format(fn), logging.INFO)
+            self.logger.post_log("{}: key already exists".format(fn), logging.DEBUG)
             return response
 
 

@@ -46,5 +46,5 @@ def get_chrome_application_location():
 def get_chromium_binary_location():
     current_dir = os.getcwd()
     if platform.system() == "Windows":
-        return current_dir + "\\" + "driver\\chromedriver-win64-118\chromedriver-win64\\chromedriver.exe"
+        return current_dir + "\\" + "driver\\chromedriver-win64-119\chromedriver-win64\\chromedriver.exe"
     return "not implemented"

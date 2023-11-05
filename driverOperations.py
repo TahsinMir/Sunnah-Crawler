@@ -8,6 +8,8 @@ import helpers
 from commonVariables import errorPfx
 
 
+css_selector_prefix = "a"
+
 class DriverOperations:
     def __init__(self, driver, logger):
         self.driver = driver
@@ -17,7 +19,12 @@ class DriverOperations:
         fn = helpers.get_function_name(inspect.currentframe())
         element = None
         try:
-            element = self.driver.find_element(By.CLASS_NAME, element_class)
+            if " " not in element_class:
+                element = self.driver.find_element(By.CLASS_NAME, element_class)
+            # indicates elements with multiple classes
+            else:
+                css_selector_path = '.'.join([css_selector_prefix] + element_class.split(" "))
+                element = self.driver.find_element(By.CSS_SELECTOR, css_selector_path)
         except Exception as e:
             element = self.logger.post_log("{}: {}: error occured while getting element, error: {}".format(errorPfx, fn, e), logging.ERROR)
         if element is None:

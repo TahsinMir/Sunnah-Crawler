@@ -1,15 +1,17 @@
-from commonVariables import sunnah_book_list, errorPfx
+from commonVariables import sunnah_book_list, errorPfx, success
 import helpers
 import inspect
+import elementList
 
 import time
 import logging
 
 class Crawler:
-    def __init__(self, logger, driver):
+    def __init__(self, logger, driver, driver_operation_instance):
         self.root_url = "https://sunnah.com"
         self.logger = logger
         self.driver = driver
+        self.driver_operation_instance = driver_operation_instance
     
     def visit_page(self, hadith_book, hadith_no):
         fn = helpers.get_function_name(inspect.currentframe())
@@ -23,6 +25,24 @@ class Crawler:
         except Exception as e:
             errorMsg = self.logger.post_log("{}: {}: error occured while visiting page: {}, error: {}".format(errorPfx, fn, url, e), logging.ERROR)
             return errorMsg
+        
+        time.sleep(5)
+        return success
+
+    def go_to_next_page(self):
+        fn = helpers.get_function_name(inspect.currentframe())
+        try:
+            next_page_button = self.driver_operation_instance.get_element(elementList.next_page)
+            if helpers.is_error(next_page_button):
+                helpers.quit_app_with_wait(self.logger, next_page_button)
+        
+            next_page_button.click()
+        except Exception as e:
+            errorMsg = self.logger.post_log("{}: {}: error occured while moving to next page, error: {}".format(errorPfx, fn, e), logging.ERROR)
+            return errorMsg
+        
+        time.sleep(5)
+        return success
 
         
     

@@ -5,6 +5,7 @@ import driverOperations
 import hadithParser
 import elementList
 import database
+import commonVariables
 from log import LOG
 from helpers import is_error, quit_app_with_wait
 from hadith import Hadith, ChapterInfo, Text, EnglishText, ArabicText, Reference, HadithProcessor
@@ -21,25 +22,25 @@ if is_error(driver):
     quit_app_with_wait(LOG, driver)
 
 
-crawler_instance = crawler.Crawler(LOG, driver)
+driver_operation_instance = driverOperations.DriverOperations(driver, LOG)
+crawler_instance = crawler.Crawler(LOG, driver, driver_operation_instance)
 response = crawler_instance.visit_page("bukhari", 5)
 if is_error(driver):
     quit_app_with_wait(LOG, response)
 
 
-driver_operation_instance = driverOperations.DriverOperations(driver, LOG)
 hadith_parser_instance = hadithParser.HadithParser(driver_operation_instance, LOG)
 
 chapter_no, chapter_name = hadith_parser_instance.parse_chapter_no_and_name()
-if is_error(chapter_no):
-    quit_app_with_wait(LOG, chapter_no, driver)
+if is_error(chapter_no) or is_error(chapter_name):
+    quit_app_with_wait(LOG, chapter_no + commonVariables.separator + chapter_name, driver)
 print(Fore.CYAN + "chapter_no" + Style.RESET_ALL)
 print(chapter_no)
 print(Fore.CYAN + "chapter_name" + Style.RESET_ALL)
 print(chapter_name)
 
 english_hadith_narrated_text, english_hadith_details_text = hadith_parser_instance.parse_english_text()
-if is_error(english_hadith_narrated_text):
+if is_error(english_hadith_narrated_text) or is_error(english_hadith_details_text):
     quit_app_with_wait(LOG, english_hadith_narrated_text)
 print(Fore.CYAN + "english_hadith_narrated_text" + Style.RESET_ALL)
 print(english_hadith_narrated_text)
