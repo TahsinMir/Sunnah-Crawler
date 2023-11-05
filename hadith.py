@@ -4,16 +4,18 @@ import hadithFields
 import helpers
 
 class Hadith:
-    def __init__(self, chapter_info, reference, text):
+    def __init__(self, chapter_info, reference, text, link):
         self.chapter_info = chapter_info
         self.reference = reference
         self.text = text
+        self.link = link
     
     def get_json(self):
         payload = {}
         payload['chapter_info'] = self.chapter_info.get_json()
         payload['reference'] = self.reference.get_json()
         payload['text'] = self.text.get_json()
+        payload['link'] = self.link.get_json()
         return payload
     
     def pprint_str(self, indent=0):
@@ -21,6 +23,7 @@ class Hadith:
         result = result + helpers.add_indent(indent + 1) + hadithFields.chapter_info + hadithFields.colon + self.chapter_info.pprint_str(indent + 1) + "\n"
         result = result + helpers.add_indent(indent + 1) + hadithFields.reference + hadithFields.colon + self.reference.pprint_str(indent + 1) + "\n"
         result = result + helpers.add_indent(indent + 1) + hadithFields.text + hadithFields.colon + self.text.pprint_str(indent + 1) + "\n"
+        result = result + helpers.add_indent(indent + 1) + hadithFields.link + hadithFields.colon + self.link.pprint_str(indent + 1) + "\n"
         result = result + helpers.add_indent(indent + 1) + "}"
         return result
 
@@ -114,6 +117,21 @@ class Reference:
         result = result + helpers.add_indent(indent + 1) + "}"
         return result
 
+class Link:
+    def __init__(self, url):
+        self.url = url
+
+    def get_json(self):
+        payload = {}
+        payload['url'] = self.url
+        return payload
+    
+    def pprint_str(self, indent=0):
+        result = "{\n"
+        result = result + helpers.add_indent(indent + 1) + hadithFields.url + hadithFields.colon + self.url + "\n"
+        result = result + helpers.add_indent(indent + 1) + "}"
+        return result
+
 
 class HadithProcessor():
     def __init__(self):
@@ -131,7 +149,8 @@ class HadithProcessor():
         english_text = EnglishText(narrated_text=hadith_json_object[hadithFields.text][hadithFields.english_text][hadithFields.narrated_text], details_text=hadith_json_object[hadithFields.text][hadithFields.english_text][hadithFields.details_text])
         arabic_text = ArabicText(full_arabic_text=hadith_json_object[hadithFields.text][hadithFields.arabic_text][hadithFields.full_arabic_text])
         text = Text(english_text=english_text, arabic_text=arabic_text)
+        link = Link(url=hadith_json_object[hadithFields.link][hadithFields.url])
         reference = Reference(reference=hadith_json_object[hadithFields.reference][hadithFields.reference], in_book_reference=hadith_json_object[hadithFields.reference][hadithFields.in_book_reference], uscmsa_web_reference=hadith_json_object[hadithFields.reference][hadithFields.uscmsa_web_reference])
         
-        hadith = Hadith(chapter_info=chapter_info, reference=reference, text=text)
+        hadith = Hadith(chapter_info=chapter_info, reference=reference, text=text, link=link)
         return hadith

@@ -8,7 +8,7 @@ import database
 import commonVariables
 from log import LOG
 from helpers import is_error, quit_app_with_wait
-from hadith import Hadith, ChapterInfo, Text, EnglishText, ArabicText, Reference, HadithProcessor
+from hadith import Hadith, ChapterInfo, Text, Link, EnglishText, ArabicText, Reference, HadithProcessor
 
 # python
 import json
@@ -60,15 +60,18 @@ if is_error(arabic_text):
 print(Fore.CYAN + "arabic_text" + Style.RESET_ALL)
 print(arabic_text)
 
+page_url = driver_operation_instance.get_page_url()
+
 # Creating a full Hadith object
 chapter_info = ChapterInfo(chapter_no=chapter_no, chapter_name=chapter_name)
 english_text = EnglishText(narrated_text=english_hadith_narrated_text, details_text=english_hadith_details_text)
 arabic_text = ArabicText(full_arabic_text=arabic_text)
 text = Text(english_text=english_text, arabic_text=arabic_text)
 reference = Reference(reference=reference_dict[elementList.reference], in_book_reference=reference_dict[elementList.in_book_reference], uscmsa_web_reference=reference_dict[elementList.uscmsa_web_reference])
+link = Link(url=page_url)
 
 
-hadith = Hadith(chapter_info=chapter_info, reference=reference, text=text)
+hadith = Hadith(chapter_info=chapter_info, reference=reference, text=text, link=link)
 print("Hadith:")
 print(hadith.pprint_str())
 

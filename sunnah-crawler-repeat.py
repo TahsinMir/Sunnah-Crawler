@@ -8,7 +8,7 @@ import database
 import commonVariables
 from log import LOG
 from helpers import is_error, quit_app_with_wait
-from hadith import Hadith, ChapterInfo, Text, EnglishText, ArabicText, Reference, HadithProcessor
+from hadith import Hadith, ChapterInfo, Text, Link, EnglishText, ArabicText, Reference, HadithProcessor
 
 # python
 import json
@@ -62,7 +62,7 @@ db_instance.create_database()
 LOG.post_log("Successfully created DB instance..", logging.INFO)
 time.sleep(3)
 
-# Creating DB instance
+# Creating hadith processor
 LOG.post_log("Creating hadith processor....", logging.INFO)
 hadith_processor = HadithProcessor()
 LOG.post_log("Successfully created hadith processor..", logging.INFO)
@@ -131,16 +131,19 @@ for counter in range(hadith_limit_int):
     arabic_text = hadith_parser_instance.parse_arabic_text()
     if is_error(arabic_text):
         quit_app_with_wait(LOG, arabic_text)
+
+    page_url = driver_operation_instance.get_page_url()
     
     # Creating a full Hadith object
     chapter_info = ChapterInfo(chapter_no=chapter_no, chapter_name=chapter_name)
     english_text = EnglishText(narrated_text=english_hadith_narrated_text, details_text=english_hadith_details_text)
     arabic_text = ArabicText(full_arabic_text=arabic_text)
     text = Text(english_text=english_text, arabic_text=arabic_text)
+    link = Link(url=page_url)
     reference = Reference(reference=reference_dict[elementList.reference], in_book_reference=reference_dict[elementList.in_book_reference], uscmsa_web_reference=reference_dict[elementList.uscmsa_web_reference])
 
 
-    hadith = Hadith(chapter_info=chapter_info, reference=reference, text=text)
+    hadith = Hadith(chapter_info=chapter_info, reference=reference, text=text, link=link)
     hadith_json = hadith_processor.hadith_to_json(hadith)
     insert = db_instance.insert_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference, hadith_json)
     if insert is False:

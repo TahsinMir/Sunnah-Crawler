@@ -24,3 +24,7 @@ uscmsa_web_reference = "uscmsa_web_reference"
 
 # random
 colon = ":"
+
+# link
+link = "link"
+url = "url"

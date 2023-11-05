@@ -65,6 +65,20 @@ class Database:
             data = self.logger.post_log("{}: {}: failed to get data with key: {}".format(commonVariables.errorPfx, fn, key), logging.ERROR)
         
         return data
+    
+    def get_all_data(self):
+        fn = helpers.get_function_name(inspect.currentframe())
+        cur = self.conn.cursor()
+        cur.execute("SELECT * from Hadiths")
+        rows = cur.fetchall()
+    
+        keys = []
+        values = []
+        for row in rows:
+            keys.append(row[0])
+            values.append(row[1])
+
+        return keys, values
 
 
         

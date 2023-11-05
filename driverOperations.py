@@ -68,3 +68,6 @@ class DriverOperations:
         if rows_as_str is None:
             rows_as_str = self.logger.post_log("{}: {}: element is none".format(errorPfx, fn), logging.ERROR)
         return rows_as_str
+    
+    def get_page_url(self):
+        return self.driver.current_url
