@@ -8,7 +8,7 @@ import database
 import commonVariables
 from log import LOG
 from helpers import is_error, quit_app_with_wait
-from hadith import Hadith, ChapterInfo, Text, Link, EnglishText, ArabicText, Reference, HadithProcessor
+from hadith import Hadith, BookInfo, ChapterInfo, Text, Link, EnglishText, ArabicText, Reference, HadithProcessor
 
 # python
 import json
@@ -30,6 +30,14 @@ if is_error(driver):
 
 
 hadith_parser_instance = hadithParser.HadithParser(driver_operation_instance, LOG)
+
+book_no, book_name = hadith_parser_instance.parse_book_no_and_name()
+if is_error(book_no) or is_error(book_name):
+    quit_app_with_wait(LOG, book_no + commonVariables.separator + book_name, driver)
+print(Fore.CYAN + "book_no" + Style.RESET_ALL)
+print(book_no)
+print(Fore.CYAN + "book_name" + Style.RESET_ALL)
+print(book_name)
 
 chapter_no, chapter_name = hadith_parser_instance.parse_chapter_no_and_name()
 if is_error(chapter_no) or is_error(chapter_name):
@@ -63,6 +71,7 @@ print(arabic_text)
 page_url = driver_operation_instance.get_page_url()
 
 # Creating a full Hadith object
+book_info = BookInfo(book_no=book_no, book_name=book_name)
 chapter_info = ChapterInfo(chapter_no=chapter_no, chapter_name=chapter_name)
 english_text = EnglishText(narrated_text=english_hadith_narrated_text, details_text=english_hadith_details_text)
 arabic_text = ArabicText(full_arabic_text=arabic_text)
@@ -71,7 +80,7 @@ reference = Reference(reference=reference_dict[elementList.reference], in_book_r
 link = Link(url=page_url)
 
 
-hadith = Hadith(chapter_info=chapter_info, reference=reference, text=text, link=link)
+hadith = Hadith(book_info=book_info, chapter_info=chapter_info, reference=reference, text=text, link=link)
 print("Hadith:")
 print(hadith.pprint_str())
 
@@ -84,12 +93,12 @@ print("string json to db")
 db_instance = database.Database(LOG)
 db_instance.create_database()
 
-insert = db_instance.insert_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference, hadith_json)
+insert = db_instance.insert_data(hadith.reference.reference, hadith_json)
 print("insert")
 print(insert)
 
 
-get = db_instance.get_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference)
+get = db_instance.get_data(hadith.reference.reference)
 print("get")
 print(get)
 
@@ -98,7 +107,7 @@ hadith_object_recreated_from_db = hadith_processor.json_to_hadith(hadith_json=ge
 print("hadith_object_recreated_from_db")
 print(hadith_object_recreated_from_db.pprint_str())
 
-delete = db_instance.delete_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference)
+delete = db_instance.delete_data(hadith.reference.reference)
 print("delete")
 print(delete)
 

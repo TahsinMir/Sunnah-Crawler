@@ -1,5 +1,10 @@
 ## constants
 
+# book
+book_info = "book_info"
+book_no = "book_no"
+book_name = "book_name"
+
 # chapter
 chapter_info = "chapter_info"
 chapter_no = "chapter_no"

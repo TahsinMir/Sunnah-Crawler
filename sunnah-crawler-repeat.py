@@ -8,7 +8,7 @@ import database
 import commonVariables
 from log import LOG
 from helpers import is_error, quit_app_with_wait
-from hadith import Hadith, ChapterInfo, Text, Link, EnglishText, ArabicText, Reference, HadithProcessor
+from hadith import Hadith, BookInfo, ChapterInfo, Text, Link, EnglishText, ArabicText, Reference, HadithProcessor
 
 # python
 import json
@@ -116,6 +116,10 @@ for counter in range(hadith_limit_int):
         quit_app_with_wait(LOG, response)
     
     # Prepare hadith payload
+    book_no, book_name = hadith_parser_instance.parse_book_no_and_name()
+    if is_error(book_no) or is_error(book_name):
+        quit_app_with_wait(LOG, book_no + commonVariables.separator + book_name)
+
     chapter_no, chapter_name = hadith_parser_instance.parse_chapter_no_and_name()
     if is_error(chapter_no) or is_error(chapter_name):
         quit_app_with_wait(LOG, chapter_no + commonVariables.separator + chapter_name)
@@ -135,6 +139,7 @@ for counter in range(hadith_limit_int):
     page_url = driver_operation_instance.get_page_url()
     
     # Creating a full Hadith object
+    book_info = BookInfo(book_no=book_no, book_name=book_name)
     chapter_info = ChapterInfo(chapter_no=chapter_no, chapter_name=chapter_name)
     english_text = EnglishText(narrated_text=english_hadith_narrated_text, details_text=english_hadith_details_text)
     arabic_text = ArabicText(full_arabic_text=arabic_text)
@@ -143,9 +148,9 @@ for counter in range(hadith_limit_int):
     reference = Reference(reference=reference_dict[elementList.reference], in_book_reference=reference_dict[elementList.in_book_reference], uscmsa_web_reference=reference_dict[elementList.uscmsa_web_reference])
 
 
-    hadith = Hadith(chapter_info=chapter_info, reference=reference, text=text, link=link)
+    hadith = Hadith(book_info=book_info, chapter_info=chapter_info, reference=reference, text=text, link=link)
     hadith_json = hadith_processor.hadith_to_json(hadith)
-    insert = db_instance.insert_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference, hadith_json)
+    insert = db_instance.insert_data(hadith.reference.reference, hadith_json)
     if insert is False:
         quit_app_with_wait(LOG, "Failed to insert hadith into DB")
     
@@ -153,10 +158,10 @@ for counter in range(hadith_limit_int):
     LOG.post_log("Inserted hadith successfully with chapter no: {}, chapter name: {}, reference: {}".format(hadith.chapter_info.chapter_no, hadith.chapter_info.chapter_name, reference.reference), logging.INFO)
     time.sleep(2)
 
-    LOG.post_log("Hadith details.....", logging.DEBUG)
-    retrieved_hadith = db_instance.get_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference)
-    retrieved_hadith_obj = hadith_processor.json_to_hadith(hadith_json=retrieved_hadith)
-    LOG.post_log(retrieved_hadith_obj.pprint_str(), logging.DEBUG)
+    ## LOG.post_log("Hadith details.....", logging.DEBUG)
+    # retrieved_hadith = db_instance.get_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference)
+    # retrieved_hadith_obj = hadith_processor.json_to_hadith(hadith_json=retrieved_hadith)
+    # LOG.post_log(retrieved_hadith_obj.pprint_str(), logging.DEBUG)
     time.sleep(5)
 
 

@@ -69,6 +69,17 @@ for hadith_json in values:
     # new page
     pdf.add_page()
 
+    # book
+    pdf.set_font('Arial', 'B', 15)
+    pdf.set_text_color(r=0, g=0, b=0)
+    pdf.cell(w = 0, h = 10, txt="Book No: " + hadith_obj.book_info.book_no + ", Book Name: " + hadith_obj.book_info.book_name, border = 0, ln = 1, align = 'L', fill = False)
+
+
+    # blank space
+    pdf.set_font('Arial', '', 10)
+    pdf.set_text_color(r=255, g=255, b=255)
+    pdf.cell(w = 0, h = 5, txt="ABCDEF", border = 0, ln = 1, align = 'L', fill = False)
+
     # chapter
     pdf.set_font('Arial', 'B', 15)
     pdf.set_text_color(r=0, g=0, b=0)

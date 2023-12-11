@@ -1,6 +1,10 @@
+# book
+book_no = "book_page_number"
+book_name = "book_page_english_name"
+
 # chapter
-chapter_no = "book_page_number"
-chapter_name = "book_page_english_name"
+chapter_no = "echapno"
+chapter_name = "englishchapter"
 
 # english part
 english_hadith_full = "english_hadith_full"

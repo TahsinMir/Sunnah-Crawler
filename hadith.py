@@ -4,7 +4,8 @@ import hadithFields
 import helpers
 
 class Hadith:
-    def __init__(self, chapter_info, reference, text, link):
+    def __init__(self, book_info, chapter_info, reference, text, link):
+        self.book_info = book_info
         self.chapter_info = chapter_info
         self.reference = reference
         self.text = text
@@ -12,6 +13,7 @@ class Hadith:
     
     def get_json(self):
         payload = {}
+        payload['book_info'] = self.book_info.get_json()
         payload['chapter_info'] = self.chapter_info.get_json()
         payload['reference'] = self.reference.get_json()
         payload['text'] = self.text.get_json()
@@ -20,10 +22,29 @@ class Hadith:
     
     def pprint_str(self, indent=0):
         result = "{\n"
+        result = result + helpers.add_indent(indent + 1) + hadithFields.book_info + hadithFields.colon + self.book_info.pprint_str(indent + 1) + "\n"
         result = result + helpers.add_indent(indent + 1) + hadithFields.chapter_info + hadithFields.colon + self.chapter_info.pprint_str(indent + 1) + "\n"
         result = result + helpers.add_indent(indent + 1) + hadithFields.reference + hadithFields.colon + self.reference.pprint_str(indent + 1) + "\n"
         result = result + helpers.add_indent(indent + 1) + hadithFields.text + hadithFields.colon + self.text.pprint_str(indent + 1) + "\n"
         result = result + helpers.add_indent(indent + 1) + hadithFields.link + hadithFields.colon + self.link.pprint_str(indent + 1) + "\n"
+        result = result + helpers.add_indent(indent + 1) + "}"
+        return result
+
+class BookInfo:
+    def __init__(self, book_no, book_name):
+        self.book_no = book_no
+        self.book_name = book_name
+
+    def get_json(self):
+        payload = {}
+        payload['book_no'] = self.book_no
+        payload['book_name'] = self.book_name
+        return payload
+
+    def pprint_str(self, indent=0):
+        result = "{\n"
+        result = result + helpers.add_indent(indent + 1) + hadithFields.book_no + hadithFields.colon + self.book_no + "\n"
+        result = result + helpers.add_indent(indent + 1) + hadithFields.book_name + hadithFields.colon + self.book_name + "\n"
         result = result + helpers.add_indent(indent + 1) + "}"
         return result
 
@@ -145,6 +166,7 @@ class HadithProcessor():
     def json_to_hadith(self, hadith_json):
         hadith_json_object = json.loads(hadith_json)
         
+        book_info = BookInfo(book_no=hadith_json_object[hadithFields.book_info][hadithFields.book_no], book_name=hadith_json_object[hadithFields.book_info][hadithFields.book_name])
         chapter_info = ChapterInfo(chapter_no=hadith_json_object[hadithFields.chapter_info][hadithFields.chapter_no], chapter_name=hadith_json_object[hadithFields.chapter_info][hadithFields.chapter_name])
         english_text = EnglishText(narrated_text=hadith_json_object[hadithFields.text][hadithFields.english_text][hadithFields.narrated_text], details_text=hadith_json_object[hadithFields.text][hadithFields.english_text][hadithFields.details_text])
         arabic_text = ArabicText(full_arabic_text=hadith_json_object[hadithFields.text][hadithFields.arabic_text][hadithFields.full_arabic_text])
@@ -152,5 +174,5 @@ class HadithProcessor():
         link = Link(url=hadith_json_object[hadithFields.link][hadithFields.url])
         reference = Reference(reference=hadith_json_object[hadithFields.reference][hadithFields.reference], in_book_reference=hadith_json_object[hadithFields.reference][hadithFields.in_book_reference], uscmsa_web_reference=hadith_json_object[hadithFields.reference][hadithFields.uscmsa_web_reference])
         
-        hadith = Hadith(chapter_info=chapter_info, reference=reference, text=text, link=link)
+        hadith = Hadith(book_info=book_info, chapter_info=chapter_info, reference=reference, text=text, link=link)
         return hadith

@@ -12,6 +12,25 @@ class HadithParser:
         self.driver_operation_instance = driver_operation_instance
         self.logger = logger
     
+    def parse_book_no_and_name(self):
+        fn = helpers.get_function_name(inspect.currentframe())
+        try:
+            book_no_element = self.driver_operation_instance.get_element(elementList.book_no)
+            book_no_element_text = self.driver_operation_instance.get_element_text(book_no_element)
+        except Exception as e:
+            errorMsg = self.logger.post_log("{}: {}: error occured while getting book no, error: {}".format(errorPfx, fn, e), logging.ERROR)
+            return errorMsg, errorMsg
+
+
+        try:
+            book_name_element = self.driver_operation_instance.get_element(elementList.book_name)
+            book_name_element_text = self.driver_operation_instance.get_element_text(book_name_element)
+        except Exception as e:
+            errorMsg = self.logger.post_log("{}: {}: error occured while getting book name, error: {}".format(errorPfx, fn, e), logging.ERROR)
+            return errorMsg, errorMsg
+        
+        return self.clean_text(book_no_element_text), self.clean_text(book_name_element_text)
+
     def parse_chapter_no_and_name(self):
         fn = helpers.get_function_name(inspect.currentframe())
         try:
@@ -39,14 +58,19 @@ class HadithParser:
             errorMsg = self.logger.post_log("{}: {}: error occured while getting full english element, error: {}".format(errorPfx, fn, e), logging.ERROR)
             return errorMsg, errorMsg
 
-
         # Hadith Narrated
+        errorMsg = ""
+        english_narrated_text_str = ""
         try:
             english_narrated_text_element = self.driver_operation_instance.get_child_element(full_english_element, elementList.narrated_text)
             english_narrated_text_str = self.driver_operation_instance.get_element_text(english_narrated_text_element)
         except Exception as e:
+            # Narrated text is not present
             errorMsg = self.logger.post_log("{}: {}: error occured while getting english narrated text, error: {}".format(errorPfx, fn, e), logging.ERROR)
-            return errorMsg, errorMsg
+
+        # if narrated text is not found, then skip to the rest
+        if helpers.is_error(errorMsg) or helpers.is_error(english_narrated_text_str):
+            english_narrated_text_str = ""
 
         # Hadith details
         try:
