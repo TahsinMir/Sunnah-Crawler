@@ -156,13 +156,13 @@ for counter in range(hadith_limit_int):
     
 
     LOG.post_log("Inserted hadith successfully with chapter no: {}, chapter name: {}, reference: {}".format(hadith.chapter_info.chapter_no, hadith.chapter_info.chapter_name, reference.reference), logging.INFO)
-    time.sleep(2)
+    time.sleep(3)
 
     ## LOG.post_log("Hadith details.....", logging.DEBUG)
     # retrieved_hadith = db_instance.get_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference)
     # retrieved_hadith_obj = hadith_processor.json_to_hadith(hadith_json=retrieved_hadith)
     # LOG.post_log(retrieved_hadith_obj.pprint_str(), logging.DEBUG)
-    time.sleep(5)
+    # time.sleep(5)
 
 
 print("Process complete. Press any key to exit...")
