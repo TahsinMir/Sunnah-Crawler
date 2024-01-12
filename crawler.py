@@ -55,8 +55,9 @@ class Crawler:
         fn = helpers.get_function_name(inspect.currentframe())
         if not self.check_hadith_book(hadith_book):
             return self.logger.post_log("{}: {}: invalid hadith_book: {}".format(errorPfx, fn, hadith_book), logging.ERROR)
-        if not isinstance(hadith_no, int):
-            return self.logger.post_log("{}: {}: invalid hadith_no: {}".format(errorPfx, fn, hadith_no), logging.ERROR)
+        # commenting out because hadith links can contain non integers
+        #if not isinstance(hadith_no, int):
+        #    return self.logger.post_log("{}: {}: invalid hadith_no: {}".format(errorPfx, fn, hadith_no), logging.ERROR)
         
         return self.root_url + "/" + hadith_book + ":" + str(hadith_no)
 

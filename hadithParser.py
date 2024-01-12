@@ -14,13 +14,17 @@ class HadithParser:
     
     def parse_book_no_and_name(self):
         fn = helpers.get_function_name(inspect.currentframe())
+        book_no_str = ""
+        book_name_str = ""
+
         try:
             book_no_element = self.driver_operation_instance.get_element(elementList.book_no)
             book_no_element_text = self.driver_operation_instance.get_element_text(book_no_element)
         except Exception as e:
             errorMsg = self.logger.post_log("{}: {}: error occured while getting book no, error: {}".format(errorPfx, fn, e), logging.ERROR)
             return errorMsg, errorMsg
-
+        if book_no_element_text is not None and not helpers.is_error(book_no_element_text):
+            book_no_str = book_no_element_text
 
         try:
             book_name_element = self.driver_operation_instance.get_element(elementList.book_name)
@@ -28,18 +32,24 @@ class HadithParser:
         except Exception as e:
             errorMsg = self.logger.post_log("{}: {}: error occured while getting book name, error: {}".format(errorPfx, fn, e), logging.ERROR)
             return errorMsg, errorMsg
-        
-        return self.clean_text(book_no_element_text), self.clean_text(book_name_element_text)
+        if book_name_element_text is not None and not helpers.is_error(book_name_element_text):
+            book_name_str = book_name_element_text
+
+        return self.clean_text(book_no_str), self.clean_text(book_name_str)
 
     def parse_chapter_no_and_name(self):
         fn = helpers.get_function_name(inspect.currentframe())
+        chapter_no_str = ""
+        chapter_name_str = ""
+
         try:
             chapter_no_element = self.driver_operation_instance.get_element(elementList.chapter_no)        
             chapter_no_element_text = self.driver_operation_instance.get_element_text(chapter_no_element)
         except Exception as e:
             errorMsg = self.logger.post_log("{}: {}: error occured while getting chapter no, error: {}".format(errorPfx, fn, e), logging.ERROR)
             return errorMsg, errorMsg
-        
+        if chapter_no_element_text is not None and not helpers.is_error(chapter_no_element_text):
+            chapter_no_str = chapter_no_element_text
 
         try:
             chapter_name_element = self.driver_operation_instance.get_element(elementList.chapter_name)            
@@ -47,8 +57,10 @@ class HadithParser:
         except Exception as e:
             errorMsg = self.logger.post_log("{}: {}: error occured while getting chapter name, error: {}".format(errorPfx, fn, e), logging.ERROR)
             return errorMsg, errorMsg
+        if chapter_name_element_text is not None and not helpers.is_error(chapter_name_element_text):
+            chapter_name_str = chapter_name_element_text
         
-        return self.clean_text(chapter_no_element_text), self.clean_text(chapter_name_element_text)
+        return self.clean_text(chapter_no_str), self.clean_text(chapter_name_str)
 
     def parse_english_text(self):
         fn = helpers.get_function_name(inspect.currentframe())
@@ -99,6 +111,11 @@ class HadithParser:
         except Exception as e:
             errorMsg = self.logger.post_log("{}: {}: error occured while getting reference, error: {}".format(errorPfx, fn, e), logging.ERROR)
             return errorMsg
+
+        # fill out absent reference types with empty
+        for reference_type in elementList.type_of_reference:
+            if reference_type not in referenceDict:
+                referenceDict[reference_type] = ""
 
         return referenceDict
     

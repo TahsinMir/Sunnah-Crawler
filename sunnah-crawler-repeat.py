@@ -83,7 +83,8 @@ try:
     hadith_no = input()
     hadith_no_int = int(hadith_no)
 except ValueError:
-    quit_app_with_wait(LOG, "Hadith book no '{}' is invalid".format(hadith_no))
+    LOG.post_log("Hadith book no '{}' is not a number. but continuing".format(hadith_no), logging.DEBUG)
+    hadith_no_int = hadith_no
 LOG.post_log("Hadith book no '{}' is valid".format(hadith_no_int), logging.INFO)
 time.sleep(3)
 
