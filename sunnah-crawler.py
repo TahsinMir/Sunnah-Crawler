@@ -4,7 +4,7 @@ import crawler
 import driverOperations
 import hadithParser
 import elementList
-import database
+import databaseHadith
 import commonVariables
 from log import LOG
 from helpers import is_error, quit_app_with_wait
@@ -24,7 +24,7 @@ if is_error(driver):
 
 driver_operation_instance = driverOperations.DriverOperations(driver, LOG)
 crawler_instance = crawler.Crawler(LOG, driver, driver_operation_instance)
-response = crawler_instance.visit_page("bukhari", 5)
+response = crawler_instance.visit_to_hadith_page("bukhari", 5)
 if is_error(driver):
     quit_app_with_wait(LOG, response)
 
@@ -90,7 +90,7 @@ print("json length::")
 print(len(hadith_json))
 
 print("string json to db")
-db_instance = database.Database(LOG)
+db_instance = databaseHadith.DatabaseHadith(LOG)
 db_instance.create_database()
 
 insert = db_instance.insert_data(hadith.reference.reference, hadith_json)

@@ -9,10 +9,10 @@ import logging
 
 import commonVariables
 
-db_name = "sunnah.db"
-table_name = "Hadiths"
+db_name = "sunnah-links.db"
+table_name = "HadithsLinks"
 
-class Database:
+class DatabaseHadithLink:
     def __init__(self, logger):
         self.logger = logger
         self.get_connection()
@@ -43,9 +43,9 @@ class Database:
             self.logger.post_log("{}: creating table".format(fn), logging.INFO)
 
         
-        self.conn.execute('''CREATE TABLE Hadiths
-         (HADITH_KEY TEXT NOT NULL UNIQUE,
-         HADITH_BLOB TEXT NOT NULL);''')
+        self.conn.execute('''CREATE TABLE HadithsLinks
+         (HADITH_LINK TEXT NOT NULL UNIQUE,
+         HADITH_LINK_BOOK_NO TEXT NOT NULL);''')
         self.logger.post_log("{}: database initialized".format(fn), logging.INFO)
     
     def is_data_exist(self, key):
@@ -56,7 +56,7 @@ class Database:
 
     def get_data(self, key):
         fn = helpers.get_function_name(inspect.currentframe())
-        rows = self.conn.execute("SELECT HADITH_BLOB from Hadiths where HADITH_KEY = ?", (key,))
+        rows = self.conn.execute("SELECT HADITH_LINK_BOOK_NO from HadithsLinks where HADITH_LINK = ?", (key,))
         data = None
         for row in rows:
             data = row[0]
@@ -69,7 +69,7 @@ class Database:
     def get_all_data(self):
         fn = helpers.get_function_name(inspect.currentframe())
         cur = self.conn.cursor()
-        cur.execute("SELECT * from Hadiths")
+        cur.execute("SELECT * from HadithsLinks")
         rows = cur.fetchall()
     
         keys = []
@@ -82,7 +82,7 @@ class Database:
 
 
         
-    def insert_data(self, key, blob):
+    def insert_data(self, key, value):
         fn = helpers.get_function_name(inspect.currentframe())
         response = True
         if self.is_data_exist(key):
@@ -91,7 +91,7 @@ class Database:
 
 
         try:
-            self.conn.execute("INSERT INTO Hadiths (HADITH_KEY, HADITH_BLOB) VALUES (?, ?)", (key, blob,))
+            self.conn.execute("INSERT INTO HadithsLinks (HADITH_LINK, HADITH_LINK_BOOK_NO) VALUES (?, ?)", (key, value,))
             self.conn.commit()
         except Exception as e:
             response = self.logger.post_log("{}: {}: error occured while inserting data with key: {}, error: {}".format(commonVariables.errorPfx, fn, key, e), logging.ERROR)
@@ -107,45 +107,10 @@ class Database:
             return response
 
         try:
-            self.conn.execute("DELETE FROM Hadiths WHERE HADITH_KEY=?", (key,))
+            self.conn.execute("DELETE FROM HadithsLinks WHERE HADITH_KEY=?", (key,))
             self.conn.commit()
         except Exception as e:
             response = self.logger.post_log("{}: {}: error occured while inserting data with key: {}, error: {}".format(commonVariables.errorPfx, fn, key, e), logging.ERROR)
         
         return response
 
-
-    def test_func(self):
-        conn = sqlite3.connect('test.db')
-
-        print ("Opened database successfully")
-
-        conn.execute('''CREATE TABLE COMPANY
-         (ID INT PRIMARY KEY     NOT NULL,
-         NAME           TEXT    NOT NULL,
-         AGE            INT     NOT NULL,
-         ADDRESS        CHAR(50),
-         SALARY         REAL);''')
-        print("Table created successfully")
-
-
-        conn.execute("INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) \
-        VALUES (1, 'Paul', 32, 'California', 20000.00 )")
-
-        conn.execute("INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) \
-        VALUES (2, 'Allen', 25, 'Texas', 15000.00 )")
-
-
-        cursor = conn.execute("SELECT id, name, address, salary from COMPANY")
-        for row in cursor:
-            print("ID = ")
-            print(row[0])
-            print("NAME = ")
-            print(row[1])
-            print("ADDRESS = ")
-            print(row[2])
-            print("SALARY = ")
-            print(row[3])
-
-        print("Operation done successfully")
-        conn.close()

@@ -71,3 +71,13 @@ class DriverOperations:
     
     def get_page_url(self):
         return self.driver.current_url
+    
+    def get_elements_by_class(self, element_class):
+        fn = helpers.get_function_name(inspect.currentframe())
+        all_elements = None
+        try:
+            all_elements =  self.driver.find_elements(By.CLASS_NAME, element_class)
+        except Exception as e:
+            all_elements = self.logger.post_log("{}: {}: error occured while getting all elements using class name. error: {}".format(errorPfx, fn, e), logging.ERROR)
+        
+        return all_elements

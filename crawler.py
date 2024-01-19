@@ -13,7 +13,23 @@ class Crawler:
         self.driver = driver
         self.driver_operation_instance = driver_operation_instance
     
-    def visit_page(self, hadith_book, hadith_no):
+    def go_to_hadith_book(self, hadith_book_name, hadith_book_no):
+        fn = helpers.get_function_name(inspect.currentframe())
+        url = self.root_url + "/" + hadith_book_name + "/" + str(hadith_book_no)
+        if helpers.is_error(url):
+            errorMsg = self.logger.post_log("{}: {}: error occured while generating url: {}".format(errorPfx, fn, url), logging.ERROR)
+        
+        try:
+            self.driver.get(url)
+            self.logger.post_log("{}: visited page: {}".format(fn, url), logging.INFO)
+        except Exception as e:
+            errorMsg = self.logger.post_log("{}: {}: error occured while visiting page: {}, error: {}".format(errorPfx, fn, url, e), logging.ERROR)
+            return errorMsg
+        
+        time.sleep(5)
+        return success
+
+    def visit_to_hadith_page(self, hadith_book, hadith_no):
         fn = helpers.get_function_name(inspect.currentframe())
         url = self.generate_url(hadith_book, hadith_no)
         if helpers.is_error(url):

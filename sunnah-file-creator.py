@@ -1,7 +1,7 @@
 # project
 from log import LOG
 from helpers import is_error, quit_app_with_wait
-import database
+import databaseHadith
 import commonVariables
 import hadithParser
 from hadith import Hadith, ChapterInfo, Text, EnglishText, ArabicText, Reference, HadithProcessor
@@ -19,7 +19,7 @@ import arabic_reshaper # pip install arabic_reshaper
 
 # Creating DB instance
 LOG.post_log("Creating DB instance....", logging.INFO)
-db_instance = database.Database(LOG)
+db_instance = databaseHadith.DatabaseHadith(LOG)
 db_instance.create_database()
 LOG.post_log("Successfully created DB instance..", logging.INFO)
 time.sleep(3)

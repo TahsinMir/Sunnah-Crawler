@@ -1,8 +1,8 @@
-import database
+import databaseHadith
 from log import LOG
 
 
-test = database.Database(LOG)
+test = databaseHadith.DatabaseHadith(LOG)
 
 conn = test.get_connection()
 test.create_database(conn)
