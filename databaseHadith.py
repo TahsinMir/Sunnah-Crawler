@@ -1,5 +1,6 @@
 # project
 import helpers
+import timeFunctions
 
 # python
 import os
@@ -82,16 +83,17 @@ class DatabaseHadith:
 
 
         
-    def insert_data(self, key, blob):
+    def insert_data(self, key, blob, grade):
         fn = helpers.get_function_name(inspect.currentframe())
         response = True
         if self.is_data_exist(key):
             self.logger.post_log("{}: key already exists".format(fn), logging.DEBUG)
             return response
 
+        current_time = timeFunctions.get_current_time()
 
         try:
-            self.conn.execute("INSERT INTO Hadiths (HADITH_KEY, HADITH_BLOB) VALUES (?, ?)", (key, blob,))
+            self.conn.execute("INSERT INTO Hadiths (HADITH_KEY, HADITH_BLOB, LAST_UPDATED, Grade) VALUES (?, ?, ?, ?)", (key, blob, current_time, grade))
             self.conn.commit()
         except Exception as e:
             response = self.logger.post_log("{}: {}: error occured while inserting data with key: {}, error: {}".format(commonVariables.errorPfx, fn, key, e), logging.ERROR)
@@ -114,6 +116,35 @@ class DatabaseHadith:
         
         return response
 
+    def run_alter_query(self, query):
+        fn = helpers.get_function_name(inspect.currentframe())
+        response = True
+        if "ALTER" not in query:
+            response = self.logger.post_log("{}: query: {}, does not have the ALTER keyword".format(fn, query), logging.ERROR)
+            return response
+        
+        try:
+            self.conn.execute(query)
+            self.conn.commit()
+        except Exception as e:
+            response = self.logger.post_log("{}: {}: error occured while altering data, error: {}, query: {}".format(commonVariables.errorPfx, fn, e, query), logging.ERROR)
+        
+        return response
+    
+    def run_update_query(self, query):
+        fn = helpers.get_function_name(inspect.currentframe())
+        response = True
+        if "UPDATE" not in query:
+            response = self.logger.post_log("{}: query: {}, does not have the UPDATE keyword".format(fn, query), logging.ERROR)
+            return response
+        
+        try:
+            self.conn.execute(query)
+            self.conn.commit()
+        except Exception as e:
+            response = self.logger.post_log("{}: {}: error occured while updating data, error: {}, query: {}".format(commonVariables.errorPfx, fn, e, query), logging.ERROR)
+        
+        return response
 
     def test_func(self):
         conn = sqlite3.connect('test.db')

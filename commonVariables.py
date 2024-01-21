@@ -1,4 +1,16 @@
-sunnah_book_list = ["bukhari", "muslim", "nasai", "abudawud", "tirmidhi", "ibnmajah", "malik", "ahmad", "darimi"]
+bukhari = "bukhari"
+muslim = "muslim"
+nasai = "nasai"
+abudawud = "abudawud"
+tirmidhi = "tirmidhi"
+ibnmajah = "ibnmajah"
+malik = "malik"
+ahmad = "ahmad"
+darimi = "darimi"
+sunnah_book_list = [bukhari, muslim, nasai, abudawud, tirmidhi, ibnmajah, malik, ahmad, darimi]
+defaultGrade = "Grade: Sahih (Darussalam)"
+unknownGrade = "Grade: Unknown"
+
 errorPfx = "ErrorMessage: "
 success = "SUCCESS"
 separator = ":::"

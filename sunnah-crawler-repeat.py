@@ -151,7 +151,11 @@ for counter in range(hadith_limit_int):
 
     hadith = Hadith(book_info=book_info, chapter_info=chapter_info, reference=reference, text=text, link=link)
     hadith_json = hadith_processor.hadith_to_json(hadith)
-    insert = db_instance.insert_data(hadith.reference.reference, hadith_json)
+
+    # Get the hadith grade
+    hadith_grade = hadith_parser_instance.get_hadith_grade(hadith_book)
+
+    insert = db_instance.insert_data(hadith.reference.reference, hadith_json, hadith_grade)
     if insert is False:
         quit_app_with_wait(LOG, "Failed to insert hadith into DB")
     

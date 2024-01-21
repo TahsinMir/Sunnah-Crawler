@@ -23,3 +23,6 @@ full_arabic_text = "arabic_hadith_full"
 
 # next page
 next_page = "hadith_nav button next"
+
+# grade
+grade = "gradetable"

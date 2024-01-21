@@ -1,9 +1,11 @@
 # project
 import elementList
 import helpers
+import commonVariables
 from commonVariables import errorPfx, success
 
 # python
+import re
 import logging
 import inspect
 
@@ -130,8 +132,25 @@ class HadithParser:
         
         return self.clean_text(full_arabic_text_element_str)
     
+    def get_hadith_grade(self, hadith_book):
+        fn = helpers.get_function_name(inspect.currentframe())
+        if hadith_book == commonVariables.bukhari or hadith_book == commonVariables.muslim:
+            return commonVariables.defaultGrade
+        
+        try:
+            hadith_grade_element = self.driver_operation_instance.get_element(elementList.grade)        
+            hadith_grade_element_str = self.driver_operation_instance.get_element_text(hadith_grade_element)
+        except Exception as e:
+            self.logger.post_log("{}: {}: error occured while getting grade of the hadith, error: {}".format(errorPfx, fn, e), logging.ERROR)
+            return commonVariables.unknownGrade
+        
+        return self.clean_text_advanced(self.clean_text(hadith_grade_element_str))
+
     def clean_text(self, text):
         return text.strip()
+    
+    def clean_text_advanced(self, text):
+        return re.sub(r"\s+", " ", text)
         
 
 

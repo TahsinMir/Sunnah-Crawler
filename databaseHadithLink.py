@@ -114,3 +114,17 @@ class DatabaseHadithLink:
         
         return response
 
+    def run_alter_query(self, query):
+        fn = helpers.get_function_name(inspect.currentframe())
+        response = True
+        if "ALTER" not in query:
+            response = self.logger.post_log("{}: query: {}, does not have the ALTER keyword".format(fn, query), logging.ERROR)
+            return response
+        
+        try:
+            self.conn.execute(query)
+            self.conn.commit()
+        except Exception as e:
+            response = self.logger.post_log("{}: {}: error occured while altering data, error: {}".format(commonVariables.errorPfx, fn, e), logging.ERROR)
+        
+        return response
