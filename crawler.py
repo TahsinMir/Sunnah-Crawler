@@ -26,7 +26,7 @@ class Crawler:
             errorMsg = self.logger.post_log("{}: {}: error occured while visiting page: {}, error: {}".format(errorPfx, fn, url, e), logging.ERROR)
             return errorMsg
         
-        time.sleep(5)
+        time.sleep(3)
         return success
 
     def visit_to_hadith_page(self, hadith_book, hadith_no):
@@ -42,7 +42,7 @@ class Crawler:
             errorMsg = self.logger.post_log("{}: {}: error occured while visiting page: {}, error: {}".format(errorPfx, fn, url, e), logging.ERROR)
             return errorMsg
         
-        time.sleep(5)
+        time.sleep(3)
         return success
 
     def go_to_next_page(self):
@@ -57,7 +57,7 @@ class Crawler:
             errorMsg = self.logger.post_log("{}: {}: error occured while moving to next page, error: {}".format(errorPfx, fn, e), logging.ERROR)
             return errorMsg
         
-        time.sleep(5)
+        time.sleep(3)
         return success
 
         
