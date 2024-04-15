@@ -82,3 +82,13 @@ Tirmihi
 2521 link is completely broken with empty number
 After 2534, its 2735:: 2535 is missing
 2741 b
+2741 c
+2743 b
+2743 c
+2743 d
+2780 b
+2783 b
+2787 b
+2811 b
+2846 b
+2856 b

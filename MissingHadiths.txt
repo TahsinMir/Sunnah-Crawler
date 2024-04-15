@@ -25,3 +25,7 @@ Hadith 1767 has duplicates
 Hadith 1770 has duplicates
 Hadith 1781 has duplicates
 Hadith 1851 has duplicates
+Hadith 3758 has duplicates
+Hadith 3759 has duplicates
+Hadith 3799 has duplicates
+Hadith 3956 has duplicates

@@ -128,13 +128,13 @@ for counter in range(hadith_limit_int):
         response = crawler_instance.visit_to_hadith_page(hadith_book, hadith_no_int)
     else:
         splitted_url = driver_operation_instance.get_page_url().split(":")
-        previous_hadith_no = int(splitted_url[len(splitted_url)-1])
+        previous_hadith_no = str(splitted_url[len(splitted_url)-1])
         response = crawler_instance.go_to_next_page()
     
     #########################
     # repeat exit logic begin
     splitted_url = driver_operation_instance.get_page_url().split(":")
-    current_hadith_no = int(splitted_url[len(splitted_url)-1])
+    current_hadith_no = str(splitted_url[len(splitted_url)-1])
     if current_hadith_no == previous_hadith_no:
         LOG.post_log("We are apparently at the same page for more than once: no: {}".format(current_hadith_no), logging.DEBUG)
         repeat_skip_counter = repeat_skip_counter + 1
@@ -143,8 +143,8 @@ for counter in range(hadith_limit_int):
         repeat_skip = True
     
     if repeat_skip:
-        LOG.post_log("Found repitition with hadith no: {}, skipping to hadith no: {}".format(current_hadith_no, current_hadith_no + 1), logging.DEBUG)
-        response = crawler_instance.visit_to_hadith_page(hadith_book, current_hadith_no + 1)
+        LOG.post_log("Found repitition with hadith no: {}, skipping to next hadith".format(current_hadith_no), logging.DEBUG)
+        response = crawler_instance.visit_to_hadith_page(hadith_book, int(current_hadith_no) + 1)
         repeat_skip = False
         repeat_skip_counter = 0
         textFile.write("Hadith {} has duplicates\n".format(current_hadith_no))
