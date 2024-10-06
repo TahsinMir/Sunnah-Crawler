@@ -14,6 +14,7 @@ from hadith import Hadith, BookInfo, ChapterInfo, Text, Link, EnglishText, Arabi
 import json
 import time
 import logging
+import os.path
 from colorama import Fore
 from colorama import Style
 
@@ -68,6 +69,17 @@ hadith_processor = HadithProcessor()
 LOG.post_log("Successfully created hadith processor..", logging.INFO)
 time.sleep(3)
 
+
+# Creating text file processor
+textFileName = "MissingHadiths.txt"
+textFile = None
+if os.path.isfile(textFileName):
+    LOG.post_log("Text file already exists. reading file as A+", logging.INFO)
+else:
+    LOG.post_log("Text file does not exist creating file as W", logging.INFO)
+textFile=open(textFileName, "a+")
+time.sleep(3)
+
 # Take in input for crawler
 LOG.post_log("Enter hadith book....", logging.INFO)
 hadith_book = input()
@@ -106,13 +118,39 @@ time.sleep(10)
 
 
 LOG.post_log("Crawling hadiths....", logging.INFO)
+repeat_skip = False
+previous_hadith_no = None
+repeat_skip_counter = 0
 for counter in range(hadith_limit_int):
     response = None
     if counter == 0:
+        previous_hadith_no = None
         response = crawler_instance.visit_to_hadith_page(hadith_book, hadith_no_int)
     else:
+        splitted_url = driver_operation_instance.get_page_url().split(":")
+        previous_hadith_no = str(splitted_url[len(splitted_url)-1])
         response = crawler_instance.go_to_next_page()
     
+    #########################
+    # repeat exit logic begin
+    splitted_url = driver_operation_instance.get_page_url().split(":")
+    current_hadith_no = str(splitted_url[len(splitted_url)-1])
+    if current_hadith_no == previous_hadith_no:
+        LOG.post_log("We are apparently at the same page for more than once: no: {}".format(current_hadith_no), logging.DEBUG)
+        repeat_skip_counter = repeat_skip_counter + 1
+    
+    if repeat_skip_counter > 2:
+        repeat_skip = True
+    
+    if repeat_skip:
+        LOG.post_log("Found repitition with hadith no: {}, skipping to next hadith".format(current_hadith_no), logging.DEBUG)
+        response = crawler_instance.visit_to_hadith_page(hadith_book, int(current_hadith_no) + 1)
+        repeat_skip = False
+        repeat_skip_counter = 0
+        textFile.write("Hadith {} has duplicates\n".format(current_hadith_no))
+    # repeat exit logic end
+    #######################
+
     if is_error(response):
         quit_app_with_wait(LOG, response)
     
@@ -173,6 +211,7 @@ for counter in range(hadith_limit_int):
 print("Process complete. Press any key to exit...")
 input()
 driver.quit()
+textFile.close()
 
 
 

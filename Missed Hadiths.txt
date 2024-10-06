@@ -38,8 +38,58 @@ Adu Dawood
 907b
 4290b
 
-tirmidhi
-391 has two hadiths
+
+Tirmihi
+391 has two references
+455,457,458 have the same references
 945 has two hadiths
-1205b
-1208b
+1205 b 
+1208 b
+1209 b
+1225 b
+1255 b
+1258 b
+1301 b
+1317 b
+1322 has two hadiths
+1365 has two hadiths
+1395 has two hadiths
+1420 has two hadiths
+1424 has two hadiths
+1425 has two hadiths
+1438 has two hadiths
+1455 has two hadiths
+1465 has two hadiths
+1471 has two hadiths
+1477 has two hadiths
+1480 has two hadiths
+1484 has two hadiths
+1491 has two hadiths
+1492 has two hadiths
+1497 has two hadiths
+1498 has two hadiths
+1500 has two hadiths
+1794 b
+1820 b
+1825 b
+1858 b
+1884 b
+1904 b
+1904 c
+2129 b
+2302 b
+2392 b
+2521 link is completely broken with empty number
+After 2534, its 2735:: 2535 is missing
+2741 b
+2741 c
+2743 b
+2743 c
+2743 d
+2780 b
+2783 b
+2787 b
+2811 b
+2846 b
+2856 b
+

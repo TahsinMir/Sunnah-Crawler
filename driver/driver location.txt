@@ -4,7 +4,12 @@ https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/118.0.5993.70/win64/
 https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.105/win64/chromedriver-win64.zip
 https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/120.0.6099.71/win64/chromedriver-win64.zip
 
+<<<<<<< HEAD
 https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/121.0.6167.8/win64/chromedriver-win64.zip
+=======
+
+https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/123.0.6262.0/win64/chromedriver-win64.zip
+>>>>>>> 6602849f413409ae4f9c0922c151fff5532b6a0c
 
 JSON Lookup:
 https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json
