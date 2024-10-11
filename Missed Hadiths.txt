@@ -93,3 +93,10 @@ After 2534, its 2735:: 2535 is missing
 2846 b
 2856 b
 
+ibnmajah
+1928 has two hadiths
+1929 does not have any hadith
+1955 has two hadiths
+1965 is not present
+2464 has possibly duplicate hadith
+2064 has no hadiths

@@ -87,7 +87,7 @@ class DatabaseHadith:
         fn = helpers.get_function_name(inspect.currentframe())
         response = True
         if self.is_data_exist(key):
-            self.logger.post_log("{}: key already exists".format(fn), logging.DEBUG)
+            self.logger.post_log("{}: key '{}' already exists".format(fn, key), logging.DEBUG)
             return response
 
         current_time = timeFunctions.get_current_time()

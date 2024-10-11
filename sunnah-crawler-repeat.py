@@ -147,7 +147,7 @@ for counter in range(hadith_limit_int):
         response = crawler_instance.visit_to_hadith_page(hadith_book, int(current_hadith_no) + 1)
         repeat_skip = False
         repeat_skip_counter = 0
-        textFile.write("Hadith {} has duplicates\n".format(current_hadith_no))
+        textFile.write("Hadith {} has duplicates for book: {}\n".format(current_hadith_no, hadith_book))
     # repeat exit logic end
     #######################
 
@@ -199,7 +199,7 @@ for counter in range(hadith_limit_int):
     
 
     LOG.post_log("Inserted hadith successfully with chapter no: {}, chapter name: {}, reference: {}".format(hadith.chapter_info.chapter_no, hadith.chapter_info.chapter_name, reference.reference), logging.INFO)
-    time.sleep(3)
+    # time.sleep(1)
 
     ## LOG.post_log("Hadith details.....", logging.DEBUG)
     # retrieved_hadith = db_instance.get_data(hadith.chapter_info.chapter_no + "+" + hadith.chapter_info.chapter_name + "+" + hadith.reference.reference)

@@ -26,3 +26,13 @@ next_page = "hadith_nav button next"
 
 # grade
 grade = "gradetable"
+
+# reference types
+reference_bukhari = "Sahih al-Bukhari"
+reference_muslim = "Sahih Muslim"
+reference_sunan_nasai = "Sunan an-Nasa'i"
+reference_sunan_dawud = "Sunan Abi Dawud"
+reference_tirmidhi = "Jami` at-Tirmidhi"
+reference_sunan_majah = "Sunan Ibn Majah"
+
+reference_types = [reference_bukhari, reference_muslim, reference_sunan_nasai, reference_sunan_dawud, reference_tirmidhi, reference_sunan_majah]
