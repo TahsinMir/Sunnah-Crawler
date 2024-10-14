@@ -19,6 +19,78 @@ from colorama import Fore
 from colorama import Style
 import sys
 
+##### Critical Function
+def CollectHadith(hadith_parser, driver_operation):
+    ###################
+    ###################
+    LOG.post_log("Trying to insert to database directly for book: {}, number: {}".format(book, number), logging.INFO)
+    time.sleep(10)
+    # Prepare hadith payload
+    try:
+        book_no, book_name = hadith_parser.parse_book_no_and_name()
+        if is_error(book_no) or is_error(book_name):
+            # quit_app_with_wait(LOG, book_no + commonVariables.separator + book_name)
+            LOG.post_log("Ignoring hadith with book: {} and number: {} because of error".format(book, number), logging.ERROR)
+            return
+
+        chapter_no, chapter_name = hadith_parser.parse_chapter_no_and_name()
+        if is_error(chapter_no) or is_error(chapter_name):
+            # quit_app_with_wait(LOG, chapter_no + commonVariables.separator + chapter_name)
+            LOG.post_log("Ignoring hadith with book: {} and number: {} because of error".format(book, number), logging.ERROR)
+            return
+
+        english_hadith_narrated_text, english_hadith_details_text = hadith_parser.parse_english_text()
+        if is_error(english_hadith_narrated_text) or is_error(english_hadith_details_text):
+            # quit_app_with_wait(LOG, english_hadith_narrated_text + commonVariables.separator + english_hadith_details_text)
+            LOG.post_log("Ignoring hadith with book: {} and number: {} because of error".format(book, number), logging.ERROR)
+            return
+        
+        reference_dict = hadith_parser.parse_reference()
+        if is_error(reference_dict):
+            # quit_app_with_wait(LOG, reference_dict)
+            LOG.post_log("Ignoring hadith with book: {} and number: {} because of error".format(book, number), logging.ERROR)
+            return
+        
+        arabic_text = hadith_parser.parse_arabic_text()
+        if is_error(arabic_text):
+            # quit_app_with_wait(LOG, arabic_text)
+            LOG.post_log("Ignoring hadith with book: {} and number: {} because of error".format(book, number), logging.ERROR)
+            return
+
+        page_url = driver_operation.get_page_url()
+        
+        # Creating a full Hadith object
+        book_info = BookInfo(book_no=book_no, book_name=book_name)
+        chapter_info = ChapterInfo(chapter_no=chapter_no, chapter_name=chapter_name)
+        english_text = EnglishText(narrated_text=english_hadith_narrated_text, details_text=english_hadith_details_text)
+        arabic_text = ArabicText(full_arabic_text=arabic_text)
+        text = Text(english_text=english_text, arabic_text=arabic_text)
+        link = Link(url=page_url)
+        reference = Reference(reference=reference_dict[elementList.reference], in_book_reference=reference_dict[elementList.in_book_reference], uscmsa_web_reference=reference_dict[elementList.uscmsa_web_reference])
+
+        print("parsed reference: {}".format(reference))
+        hadith = Hadith(book_info=book_info, chapter_info=chapter_info, reference=reference, text=text, link=link)
+        hadith_json = hadith_processor.hadith_to_json(hadith)
+
+        # Get the hadith grade
+        hadith_grade = hadith_parser.get_hadith_grade(book)
+
+        print("for insert. hadith reference is")
+        print(hadith.reference.reference)
+        time.sleep(3)
+        insert = hadith_db_instance.insert_data(hadith.reference.reference, hadith_json, hadith_grade)
+        if insert is False:
+            quit_app_with_wait(LOG, "Failed to insert hadith into DB")
+        
+
+        LOG.post_log("Inserted hadith successfully with chapter no: {}, chapter name: {}, reference: {}".format(hadith.chapter_info.chapter_no, hadith.chapter_info.chapter_name, reference.reference), logging.INFO)
+    except ValueError:
+        LOG.post_log("Trying to insert data directly failed with book: '{}', number: '{}'".format(book, number), logging.DEBUG)#
+    # time.sleep(1)
+    return
+    ###################
+    ###################
+
 
 # Creating hadith DB instance
 LOG.post_log("Creating hadith DB instance....", logging.INFO)
@@ -139,8 +211,8 @@ print("Hadiths that do not exists in record:")
 print(absent_hadiths)
 print(len(absent_hadiths))
 
-print("Returning here for the moment")
-sys.exit(0)
+#print("Returning here for the moment")
+#sys.exit(0)
 
 
 # Let's see how many we can resolve just by directly going to the website
@@ -150,75 +222,17 @@ for link in absent_hadiths:
     print("Book: {}, number: {}".format(book, number))
 
     response = crawler_instance.visit_to_hadith_page(book, number)
-    counter = counter + 1
-    # if counter > 10:
-    #     break
-
-    ###################
-    ###################
-    LOG.post_log("Trying to insert to database directly for book: {}, number: {}".format(book, number), logging.INFO)
-    time.sleep(10)
-    # Prepare hadith payload
-    try:
-        book_no, book_name = hadith_parser_instance.parse_book_no_and_name()
-        if is_error(book_no) or is_error(book_name):
-            # quit_app_with_wait(LOG, book_no + commonVariables.separator + book_name)
-            LOG.post_log("Ignoring hadith with book: {} and number: {} because of error".format(book, number), logging.ERROR)
-            continue
-
-        chapter_no, chapter_name = hadith_parser_instance.parse_chapter_no_and_name()
-        if is_error(chapter_no) or is_error(chapter_name):
-            # quit_app_with_wait(LOG, chapter_no + commonVariables.separator + chapter_name)
-            LOG.post_log("Ignoring hadith with book: {} and number: {} because of error".format(book, number), logging.ERROR)
-            continue
-
-        english_hadith_narrated_text, english_hadith_details_text = hadith_parser_instance.parse_english_text()
-        if is_error(english_hadith_narrated_text) or is_error(english_hadith_details_text):
-            # quit_app_with_wait(LOG, english_hadith_narrated_text + commonVariables.separator + english_hadith_details_text)
-            LOG.post_log("Ignoring hadith with book: {} and number: {} because of error".format(book, number), logging.ERROR)
-            continue
-        
-        reference_dict = hadith_parser_instance.parse_reference()
-        if is_error(reference_dict):
-            # quit_app_with_wait(LOG, reference_dict)
-            LOG.post_log("Ignoring hadith with book: {} and number: {} because of error".format(book, number), logging.ERROR)
-            continue
-        
-        arabic_text = hadith_parser_instance.parse_arabic_text()
-        if is_error(arabic_text):
-            # quit_app_with_wait(LOG, arabic_text)
-            LOG.post_log("Ignoring hadith with book: {} and number: {} because of error".format(book, number), logging.ERROR)
-            continue
-
-        page_url = driver_operation_instance.get_page_url()
-        
-        # Creating a full Hadith object
-        book_info = BookInfo(book_no=book_no, book_name=book_name)
-        chapter_info = ChapterInfo(chapter_no=chapter_no, chapter_name=chapter_name)
-        english_text = EnglishText(narrated_text=english_hadith_narrated_text, details_text=english_hadith_details_text)
-        arabic_text = ArabicText(full_arabic_text=arabic_text)
-        text = Text(english_text=english_text, arabic_text=arabic_text)
-        link = Link(url=page_url)
-        reference = Reference(reference=reference_dict[elementList.reference], in_book_reference=reference_dict[elementList.in_book_reference], uscmsa_web_reference=reference_dict[elementList.uscmsa_web_reference])
-
-        print("parsed reference: {}".format(reference))
-        hadith = Hadith(book_info=book_info, chapter_info=chapter_info, reference=reference, text=text, link=link)
-        hadith_json = hadith_processor.hadith_to_json(hadith)
-
-        # Get the hadith grade
-        hadith_grade = hadith_parser_instance.get_hadith_grade(book)
-
-        print("for insert. hadith reference is")
-        print(hadith.reference.reference)
-        time.sleep(3)
-        insert = hadith_db_instance.insert_data(hadith.reference.reference, hadith_json, hadith_grade)
-        if insert is False:
-            quit_app_with_wait(LOG, "Failed to insert hadith into DB")
-        
-
-        LOG.post_log("Inserted hadith successfully with chapter no: {}, chapter name: {}, reference: {}".format(hadith.chapter_info.chapter_no, hadith.chapter_info.chapter_name, reference.reference), logging.INFO)
-    except ValueError:
-        LOG.post_log("Trying to insert data directly failed with book: '{}', number: '{}'".format(book, number), logging.DEBUG)#
-    # time.sleep(1)
-    ###################
-    ###################
+    time.sleep(5)
+    if hadith_parser_instance.is_empty_page():
+        LOG.post_log("Page is empty. looking for splitted urls for book {} and number {}".format(book, number), logging.DEBUG)
+        # try splitting by comma
+        splittedNumbers = number.split(",")
+        for splittedNumber in splittedNumbers:
+            filteredNumber = splittedNumber.strip()
+            response = crawler_instance.visit_to_hadith_page(book, filteredNumber)
+            time.sleep(5)
+            CollectHadith(hadith_parser_instance, driver_operation_instance)
+    else:
+        LOG.post_log("Page is NOT empty.", logging.DEBUG)
+        time.sleep(5)
+        CollectHadith(hadith_parser_instance, driver_operation_instance)

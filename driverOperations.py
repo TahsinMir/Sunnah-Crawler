@@ -81,3 +81,12 @@ class DriverOperations:
             all_elements = self.logger.post_log("{}: {}: error occured while getting all elements using class name. error: {}".format(errorPfx, fn, e), logging.ERROR)
         
         return all_elements
+
+    def get_element_by_text(self, element_text):
+        fn = helpers.get_function_name(inspect.currentframe())
+        element = None
+        try:
+            element =  self.driver.find_element(By.XPATH, "//*[text()='{}']".format(element_text))
+        except Exception as e:
+            element = self.logger.post_log("{}: {}: error occured while getting element using text. error: {}".format(errorPfx, fn, e), logging.ERROR)
+        return element

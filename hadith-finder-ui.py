@@ -22,6 +22,15 @@ from colorama import Fore
 from colorama import Style
 
 
+def FindString(find_text, keys, values):
+    found_hadiths_keys = []
+    for i in range(0, len(values)):
+        if find_text.lower() in values[i].lower():
+            found_hadiths_keys.append(keys[i])
+        # else:
+        #     print("no match")
+    return len(found_hadiths_keys), found_hadiths_keys
+
 ###### Copy paste begin
 LOG.post_log("Starting hadith finder....", logging.INFO)
 
@@ -42,7 +51,7 @@ time.sleep(3)
 
 print("time before reading data:")
 print(datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y"))
-keys, values  = db_instance.get_all_data()
+hadith_keys, hadith_values  = db_instance.get_all_data()
 print(datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y"))
 
 sg.theme('DarkAmber')   # Add a touch of color
@@ -56,14 +65,14 @@ window = sg.Window('Hadith Finder', layout)
 # Event Loop to process "events" and get the "values" of the inputs
 while True:
     event, values = window.read()
-    # confirmed = values[0]
     # temp = values[1]
     # forbidden = values[2]
     if event == sg.WIN_CLOSED or event == 'Quit': # if user closes window or clicks cancel
         break
     if event == 'Search':
-        print("test")
-        print(len(keys))
+        searchStr = values[0]
+        result_number, result_keys = FindString(searchStr, hadith_keys, hadith_values)
+        sg.Popup(str(result_number) + str(result_keys))
     	#result = CheckRegex(confirmed, temp, forbidden)
     	#if result == "looks good":
     	#	wordList = GetFinalWordList(confirmed, temp, forbidden)

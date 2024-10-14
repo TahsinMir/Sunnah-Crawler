@@ -36,3 +36,6 @@ reference_tirmidhi = "Jami` at-Tirmidhi"
 reference_sunan_majah = "Sunan Ibn Majah"
 
 reference_types = [reference_bukhari, reference_muslim, reference_sunan_nasai, reference_sunan_dawud, reference_tirmidhi, reference_sunan_majah]
+
+# hadith not found
+hadith_not_found  = " to go to the home page.	"

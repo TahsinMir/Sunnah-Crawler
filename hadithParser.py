@@ -151,6 +151,18 @@ class HadithParser:
     
     def clean_text_advanced(self, text):
         return re.sub(r"\s+", " ", text)
+    
+    def is_empty_page(self):
+        fn = helpers.get_function_name(inspect.currentframe())
+        element = self.driver_operation_instance.get_element_by_text(elementList.hadith_not_found)
+        if helpers.is_error(element):
+            return False
+        if element is None:
+            return False
+        return True
+
+
+
         
 
 
