@@ -22,14 +22,35 @@ from colorama import Fore
 from colorama import Style
 
 
-def FindString(find_text, keys, values):
+def FindString(find_text, keys, values, allowed_books):
     found_hadiths_keys = []
     for i in range(0, len(values)):
         if find_text.lower() in values[i].lower():
-            found_hadiths_keys.append(keys[i])
+            if IsBookMatch(keys[i], allowed_books):
+                found_hadiths_keys.append(keys[i])
         # else:
         #     print("no match")
     return len(found_hadiths_keys), found_hadiths_keys
+
+
+def IsBookMatch(hadith_key, allowed_books):
+    hadith_key_type = None
+    if elementList.reference_bukhari in hadith_key:
+        hadith_key_type = commonVariables.bukhari
+    elif elementList.reference_muslim in hadith_key:
+        hadith_key_type = commonVariables.muslim
+    elif elementList.reference_sunan_nasai in hadith_key:
+        hadith_key_type = commonVariables.nasai
+    elif elementList.reference_sunan_dawud in hadith_key:
+        hadith_key_type = commonVariables.abudawud
+    elif elementList.reference_tirmidhi in hadith_key:
+        hadith_key_type = commonVariables.tirmidhi
+    elif elementList.reference_sunan_majah in hadith_key:
+        hadith_key_type = commonVariables.ibnmajah
+    
+    if hadith_key_type is None:
+        return False
+    return allowed_books[hadith_key_type]
 
 ###### Copy paste begin
 LOG.post_log("Starting hadith finder....", logging.INFO)
@@ -57,7 +78,8 @@ print(datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y"))
 sg.theme('DarkAmber')   # Add a touch of color
 # All the stuff inside your window.
 layout = [  [sg.Text('This is the Hadith Finder', text_color='lightblue')],
-			[sg.Text('Search string', text_color='green'), sg.InputText()],
+			[sg.Text('Search String', text_color='green'), sg.InputText(key=commonVariables.searchStr)],
+            [sg.Text('Hadith Book', text_color='green'), sg.Checkbox('Bukhari', key=commonVariables.bukhari), sg.Checkbox('Muslim', key=commonVariables.muslim), sg.Checkbox('Nasai', key=commonVariables.nasai), sg.Checkbox('Abudawud', key=commonVariables.abudawud), sg.Checkbox('Tirmidhi', key=commonVariables.tirmidhi), sg.Checkbox('Ibnmajah', key=commonVariables.ibnmajah)],
             [sg.Button('Search'), sg.Button('Quit')] ]
 
 # Create the Window
@@ -70,9 +92,31 @@ while True:
     if event == sg.WIN_CLOSED or event == 'Quit': # if user closes window or clicks cancel
         break
     if event == 'Search':
-        searchStr = values[0]
-        result_number, result_keys = FindString(searchStr, hadith_keys, hadith_values)
-        sg.Popup(str(result_number) + str(result_keys))
+        print("just printing all values to understand")
+        print(values)
+        searchStr = values[commonVariables.searchStr]
+        allowed_books = {
+            commonVariables.bukhari: values[commonVariables.bukhari],
+            commonVariables.muslim: values[commonVariables.muslim],
+            commonVariables.nasai: values[commonVariables.nasai],
+            commonVariables.abudawud: values[commonVariables.abudawud],
+            commonVariables.tirmidhi: values[commonVariables.tirmidhi],
+            commonVariables.ibnmajah: values[commonVariables.ibnmajah]
+        }
+        all_false = all(value is False for value in allowed_books.values())
+        if all_false:
+            allowed_books = {
+            commonVariables.bukhari: True,
+            commonVariables.muslim: True,
+            commonVariables.nasai: True,
+            commonVariables.abudawud: True,
+            commonVariables.tirmidhi: True,
+            commonVariables.ibnmajah: True
+        }
+        result_number, result_keys = FindString(searchStr, hadith_keys, hadith_values, allowed_books)
+        if len(result_keys) > 10:
+            result_keys = result_keys[:10]
+        sg.Popup("Total match count: " + str(result_number) + ", Sample: " + str(result_keys))
     	#result = CheckRegex(confirmed, temp, forbidden)
     	#if result == "looks good":
     	#	wordList = GetFinalWordList(confirmed, temp, forbidden)

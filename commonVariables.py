@@ -14,3 +14,5 @@ unknownGrade = "Grade: Unknown"
 errorPfx = "ErrorMessage: "
 success = "SUCCESS"
 separator = ":::"
+
+searchStr = "searchStr"
