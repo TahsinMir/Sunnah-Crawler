@@ -4,6 +4,7 @@ import timeFunctions
 
 # python
 import os
+import sys
 import sqlite3
 import inspect
 import logging
@@ -19,8 +20,20 @@ class DatabaseHadith:
         self.get_connection()
     
     def get_connection(self):
-        conn = sqlite3.connect(db_name)
+        database_path = self.get_database_path()
+        conn = sqlite3.connect(database_path)
         self.conn = conn
+    
+    def get_database_path(self):
+        # Get the base path for the executable
+        if getattr(sys, 'frozen', False):
+            # The application is frozen
+            base_path = sys._MEIPASS
+        else:
+            # The application is not frozen
+            base_path = os.path.dirname(__file__)
+        
+        return os.path.join(base_path, db_name)  # Replace 'database.db' with your actual database filename
     
     def check_if_table_exists(self):
         fn = helpers.get_function_name(inspect.currentframe())
