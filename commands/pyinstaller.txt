@@ -1,0 +1,1 @@
+pyinstaller --onefile --add-data "sunnah.db;." hadith-finder-ui.py
